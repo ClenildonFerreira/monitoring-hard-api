@@ -1,0 +1,42 @@
+# Build e binários
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.log
+*.db
+*.db-shm
+*.db-wal
+
+# Configurações locais
+*.user
+*.suo
+*.userosscache
+*.userprefs
+
+# Visual Studio
+.vs/
+.vscode/
+*.ncrunchsolution
+*.ncrunchproject
+
+# Migrations
+# /Infra/Banco/Migrations/
+
+# Dependências
+packages/
+*.nuget
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.bak
+
+# Logs
+*.log
+logs/
+
+# Sistema operacional
+Thumbs.db
+.DS_Store

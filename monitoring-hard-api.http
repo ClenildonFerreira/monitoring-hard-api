@@ -1,0 +1,6 @@
+@monitoring_hard_api_HostAddress = http://localhost:5009
+
+GET {{monitoring_hard_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
