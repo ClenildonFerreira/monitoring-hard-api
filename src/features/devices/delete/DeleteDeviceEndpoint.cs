@@ -19,15 +19,18 @@ public class DeleteDeviceEndpoint : ICarterModule
             if (device == null)
                 return Results.NotFound("Dispositivo não encontrado");
 
-            try
+            if (!string.IsNullOrWhiteSpace(device.IntegrationId))
             {
-                await iotClient.UnregisterDeviceAsync(device.IntegrationId);
-            }
-            catch (Exception)
-            {
-                return Results.Problem(
-                    "Não foi possível desregistrar o dispositivo",
-                    statusCode: StatusCodes.Status502BadGateway);
+                try
+                {
+                    await iotClient.UnregisterDeviceAsync(device.IntegrationId!);
+                }
+                catch (Exception)
+                {
+                    return Results.Problem(
+                        "Não foi possível desregistrar o dispositivo",
+                        statusCode: StatusCodes.Status502BadGateway);
+                }
             }
 
             db.Devices.Remove(device);

@@ -30,24 +30,30 @@ public class CreateDeviceEndpoint : ICarterModule
                 Location = request.Location,
                 CreatedAt = DateTime.UtcNow
             };
+            db.Devices.Add(device);
+            await db.SaveChangesAsync();
 
             try
             {
                 var callbackUrl = $"{context.Request.Scheme}://{context.Request.Host}/api/events";
-                device.IntegrationId = await iotClient.RegisterDeviceAsync(
+                var integrationId = await iotClient.RegisterDeviceAsync(
                     device.Name,
                     device.Location,
                     callbackUrl);
+
+                device.IntegrationId = integrationId;
+                device.UpdatedAt = DateTime.UtcNow;
+                await db.SaveChangesAsync();
             }
             catch (Exception)
             {
+                db.Devices.Remove(device);
+                await db.SaveChangesAsync();
+
                 return Results.Problem(
                     "Não foi possível registrar o dispositivo",
                     statusCode: StatusCodes.Status502BadGateway);
             }
-
-            db.Devices.Add(device);
-            await db.SaveChangesAsync();
 
             return Results.Created($"/api/devices/{device.Id}", device);
         });

@@ -11,7 +11,7 @@ namespace MonitoringHardApi.Infrastructure.Database.Configurations
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).IsRequired();
             builder.Property(x => x.Location).IsRequired();
-            builder.Property(x => x.IntegrationId).IsRequired();
+            builder.Property(x => x.IntegrationId).IsRequired(false);
             
             builder.HasMany(x => x.Events)
                 .WithOne(x => x.Device)

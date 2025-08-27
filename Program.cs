@@ -1,6 +1,7 @@
 using MonitoringHardApi.Infrastructure.Database;
 using MonitoringHardApi.Infrastructure.Iot;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Carter;
 using FluentValidation;
 
@@ -20,7 +21,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<IIotClient, IotProviderClient>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+    ));
 
 var app = builder.Build();
 
