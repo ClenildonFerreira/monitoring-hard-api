@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 
 namespace MonitoringHardApi.Infrastructure.Iot
 {
-    public interface IIotSimulatorClient
+    public interface IIotClient
     {
         Task<string> RegisterDeviceAsync(string name, string location, string callbackUrl);
         Task UnregisterDeviceAsync(string integrationId);
     }
 
-    public class IotSimulatorClient : IIotSimulatorClient
+    public class IotProviderClient : IIotClient
     {
         private readonly HttpClient _httpClient;
 
-        public IotSimulatorClient(HttpClient httpClient)
+        public IotProviderClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri("http://localhost:5000/");
@@ -34,7 +34,8 @@ namespace MonitoringHardApi.Infrastructure.Iot
             response.EnsureSuccessStatusCode();
             
             var content = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<string>(content);
+            var integrationId = JsonSerializer.Deserialize<string>(content);
+            return integrationId ?? throw new InvalidOperationException("Integration ID não pode ser nulo");
         }
 
         public async Task UnregisterDeviceAsync(string integrationId)
