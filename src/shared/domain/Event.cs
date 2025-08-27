@@ -4,8 +4,8 @@ namespace MonitoringHardApi.Shared.Domain
 {
     public class Event
     {
-        public int Id { get; set; }
-        public int DeviceId { get; set; }
+        public Guid Id { get; set; }
+        public Guid DeviceId { get; set; }
         public double Temperature { get; set; }
         public double Humidity { get; set; }
         public bool IsAlarm { get; set; }
