@@ -1,10 +1,15 @@
 using MonitoringHardApi.Infrastructure.Database;
+using MonitoringHardApi.Infrastructure.Iot;
 using Microsoft.EntityFrameworkCore;
 using Carter;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCarter();
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+
+builder.Services.AddHttpClient<IIotClient, IotProviderClient>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
