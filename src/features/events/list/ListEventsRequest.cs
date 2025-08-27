@@ -1,20 +1,20 @@
 using System.Text.Json.Serialization;
 
-namespace MonitoringHardApi.Features.Devices.List;
+namespace MonitoringHardApi.Features.Events.List;
 
-public class ListDevicesRequest
+public class ListEventsRequest
 {
-    [JsonPropertyName("search")]
-    public string? Search { get; set; }
-    
-    [JsonPropertyName("location")]
-    public string? Location { get; set; }
+    [JsonPropertyName("deviceId")]
+    public Guid? DeviceId { get; set; }
     
     [JsonPropertyName("fromDate")]
     public DateTime? FromDate { get; set; }
     
     [JsonPropertyName("toDate")]
     public DateTime? ToDate { get; set; }
+    
+    [JsonPropertyName("onlyAlarms")]
+    public bool OnlyAlarms { get; set; }
     
     [JsonPropertyName("page")]
     public int Page { get; set; } = 1;

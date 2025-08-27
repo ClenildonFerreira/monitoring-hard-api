@@ -6,6 +6,11 @@ using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+});
+
 builder.Services.AddCarter();
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddAuthorization();
