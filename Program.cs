@@ -8,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCarter();
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+builder.Services.AddAuthorization();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient<IIotClient, IotProviderClient>();
 
@@ -18,8 +21,11 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapCarter();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.MapCarter();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
