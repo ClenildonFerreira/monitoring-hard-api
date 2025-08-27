@@ -1,7 +1,6 @@
 using MonitoringHardApi.Infrastructure.Database;
 using MonitoringHardApi.Infrastructure.Iot;
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Carter;
 using FluentValidation;
 

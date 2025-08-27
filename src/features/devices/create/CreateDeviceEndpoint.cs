@@ -1,6 +1,4 @@
 using Carter;
-using Carter.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using MonitoringHardApi.Infrastructure.Database;
 using MonitoringHardApi.Infrastructure.Iot;
 using MonitoringHardApi.Shared.Domain;
@@ -15,7 +13,8 @@ public class CreateDeviceEndpoint : ICarterModule
             CreateDeviceRequest request,
             ApplicationDbContext db,
             IIotClient iotClient,
-            HttpContext context) =>
+            HttpContext context,
+            ILogger<CreateDeviceEndpoint> logger) =>
         {
             var validator = new CreateDeviceValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -45,8 +44,10 @@ public class CreateDeviceEndpoint : ICarterModule
                 device.UpdatedAt = DateTime.UtcNow;
                 await db.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError(ex, "Falha ao registrar no provedorpara device {DeviceId}", device.Id);
+
                 db.Devices.Remove(device);
                 await db.SaveChangesAsync();
 

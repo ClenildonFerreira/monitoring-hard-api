@@ -1,5 +1,4 @@
 using Carter;
-using Microsoft.EntityFrameworkCore;
 using MonitoringHardApi.Infrastructure.Database;
 using MonitoringHardApi.Infrastructure.Iot;
 
