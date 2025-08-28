@@ -17,7 +17,6 @@ namespace MonitoringHardApi.Infrastructure.Iot
         {
             _httpClient = httpClient;
             _logger = logger;
-            _httpClient.BaseAddress = new Uri("http://localhost:5000/");
         }
         public async Task<string> RegisterDeviceAsync(string name, string location, string callbackUrl)
         {

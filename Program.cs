@@ -17,7 +17,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHttpClient<IIotClient, IotProviderClient>();
+var iotBase = builder.Configuration.GetValue<string>("Iot:BaseUrl") ?? "http://localhost:5000/";
+builder.Services.AddHttpClient<IIotClient, IotProviderClient>(client =>
+{
+    client.BaseAddress = new Uri(iotBase);
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
