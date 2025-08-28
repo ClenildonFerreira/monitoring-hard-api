@@ -26,10 +26,29 @@ namespace MonitoringHardApi.Infrastructure.Iot
                 location = location,
                 callbackUrl = callbackUrl
             };
+            
+            try
+            {
+                var reqJson = JsonSerializer.Serialize(request);
+                _logger.LogDebug("IotProviderClient Register request: {Request}", reqJson);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "Failed to serialize register request for logging");
+            }
 
             var response = await _httpClient.PostAsJsonAsync("register", request);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                _logger.LogDebug("IotProviderClient Register response: {Response}", content);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "Failed to log register response");
+            }
 
             if (string.IsNullOrWhiteSpace(content))
                 throw new InvalidOperationException("Resposta vazia do provedor IoT ao registrar dispositivo");
@@ -89,7 +108,21 @@ namespace MonitoringHardApi.Infrastructure.Iot
 
         public async Task UnregisterDeviceAsync(string integrationId)
         {
-            var response = await _httpClient.DeleteAsync($"unregister/{integrationId}");
+            var url = $"unregister/{integrationId}";
+            _logger.LogDebug("IotProviderClient Unregister request: {Url}", url);
+
+            var response = await _httpClient.DeleteAsync(url);
+            var content = await response.Content.ReadAsStringAsync();
+
+            try
+            {
+                _logger.LogDebug("IotProviderClient Unregister response: {Response}", content);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "Failed to log unregister response");
+            }
+
             response.EnsureSuccessStatusCode();
         }
     }

@@ -14,7 +14,8 @@ public class CreateDeviceEndpoint : ICarterModule
             ApplicationDbContext db,
             IIotClient iotClient,
             HttpContext context,
-            ILogger<CreateDeviceEndpoint> logger) =>
+            ILogger<CreateDeviceEndpoint> logger,
+            IConfiguration config) =>
         {
             var validator = new CreateDeviceValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -34,7 +35,10 @@ public class CreateDeviceEndpoint : ICarterModule
 
             try
             {
-                var callbackUrl = $"{context.Request.Scheme}://{context.Request.Host}/api/events";
+                var callbackBase = config.GetValue<string>("Iot:CallbackBaseUrl");
+                var callbackUrl = string.IsNullOrWhiteSpace(callbackBase)
+                    ? $"{context.Request.Scheme}://{context.Request.Host}/api/events"
+                    : callbackBase.TrimEnd('/') + "/api/events";
                 var integrationId = await iotClient.RegisterDeviceAsync(
                     device.Name,
                     device.Location,
