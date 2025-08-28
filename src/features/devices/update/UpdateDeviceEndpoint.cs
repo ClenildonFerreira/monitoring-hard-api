@@ -9,7 +9,7 @@ public class UpdateDeviceEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-    app.MapPatch("/api/devices/{id}", async (
+        app.MapPut("/api/devices/{id}", async (
             Guid id,
             UpdateDeviceRequest request,
             ApplicationDbContext db) =>
@@ -25,11 +25,8 @@ public class UpdateDeviceEndpoint : ICarterModule
             if (device == null)
                 return Results.NotFound("Dispositivo não encontrado");
 
-            if (request.Name != null)
-                device.Name = request.Name;
-
-            if (request.Location != null)
-                device.Location = request.Location;
+            device.Name = request.Name;
+            device.Location = request.Location;
             device.UpdatedAt = DateTime.UtcNow;
 
             await db.SaveChangesAsync();
