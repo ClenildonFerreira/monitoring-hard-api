@@ -10,8 +10,8 @@ namespace MonitoringHardApi.Infrastructure.Database
         {
         }
 
-        public DbSet<Device> Devices { get; set; }
-        public DbSet<Event> Events { get; set; }
+    public DbSet<Device> Devices { get; set; } = null!;
+    public DbSet<Event> Events { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

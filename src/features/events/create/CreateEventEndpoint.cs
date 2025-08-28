@@ -13,7 +13,8 @@ public class CreateEventEndpoint : ICarterModule
         app.MapPost("/api/events", async (
             CreateEventRequest request,
             ApplicationDbContext db,
-            IHubContext<MonitoringHardApi.Infrastructure.Signaling.EventHub> hub) =>
+            IHubContext<MonitoringHardApi.Infrastructure.Signaling.EventHub> hub,
+            ILogger<CreateEventEndpoint> logger) =>
         {
             var validator = new CreateEventValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -39,8 +40,6 @@ public class CreateEventEndpoint : ICarterModule
 
             db.Events.Add(@event);
             await db.SaveChangesAsync();
-
-            // Publish to SignalR hub for real-time clients
             try
             {
                 await hub.Clients.All.SendAsync("EventReceived", new
@@ -53,7 +52,10 @@ public class CreateEventEndpoint : ICarterModule
                     Device = new { device.Id, device.Name, device.Location }
                 });
             }
-            catch { /* swallow hub errors to not break the API */ }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Falha ao publicar evento para device {DeviceId}", device.Id);
+            }
 
             return Results.Ok(new
             {
