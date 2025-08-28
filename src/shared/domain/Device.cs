@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Generic;
-
 namespace MonitoringHardApi.Shared.Domain
 {
     public class Device
     {
         public Device()
         {
-            Events = new List<Event>();
+                Events = new List<Event>();
+                CreatedAt = DateTime.UtcNow;
         }
 
         public Guid Id { get; set; }

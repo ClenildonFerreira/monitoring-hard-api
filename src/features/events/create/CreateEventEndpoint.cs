@@ -1,8 +1,8 @@
 using Carter;
-using Carter.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using MonitoringHardApi.Infrastructure.Database;
 using MonitoringHardApi.Shared.Domain;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MonitoringHardApi.Features.Events.Create;
 
@@ -12,7 +12,8 @@ public class CreateEventEndpoint : ICarterModule
     {
         app.MapPost("/api/events", async (
             CreateEventRequest request,
-            ApplicationDbContext db) =>
+            ApplicationDbContext db,
+            IHubContext<MonitoringHardApi.Infrastructure.Signaling.EventHub> hub) =>
         {
             var validator = new CreateEventValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -38,6 +39,21 @@ public class CreateEventEndpoint : ICarterModule
 
             db.Events.Add(@event);
             await db.SaveChangesAsync();
+
+            // Publish to SignalR hub for real-time clients
+            try
+            {
+                await hub.Clients.All.SendAsync("EventReceived", new
+                {
+                    @event.Id,
+                    @event.Temperature,
+                    @event.Humidity,
+                    @event.IsAlarm,
+                    @event.Timestamp,
+                    Device = new { device.Id, device.Name, device.Location }
+                });
+            }
+            catch { /* swallow hub errors to not break the API */ }
 
             return Results.Ok(new
             {

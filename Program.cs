@@ -21,7 +21,10 @@ var iotBase = builder.Configuration.GetValue<string>("Iot:BaseUrl") ?? "http://l
 builder.Services.AddHttpClient<IIotClient, IotProviderClient>(client =>
 {
     client.BaseAddress = new Uri(iotBase);
+    client.Timeout = TimeSpan.FromSeconds(10);
 });
+
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
@@ -37,15 +40,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapCarter();
-
 app.UseHttpsRedirection();
+app.UseRouting();
 app.UseAuthorization();
+
+app.MapCarter();
+app.MapHub<MonitoringHardApi.Infrastructure.Signaling.EventHub>("/hubs/events");
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    var migrateOnStart = builder.Configuration.GetValue<bool?>("MigrateOnStart") ?? true;
+    if (migrateOnStart)
+        db.Database.Migrate();
 }
 
 app.Run();
